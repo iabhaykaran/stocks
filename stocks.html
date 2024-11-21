@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Profit Calculator</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #218838;
+        }
+
+        .result {
+            display: none;
+            margin-top: 20px;
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 8px;
+        }
+
+        .result p {
+            margin: 8px 0;
+        }
+
+        .result h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <img src="mata.jpg" alt="" width="100%" height="450px">
+        <h1>Grow Profit Calculator</h1>
+        <h3>Jai mata di </h3>
+        <form id="calculatorForm">
+            <label for="previousPrice">Previous Stock Price:</label>
+            <input type="number" id="previousPrice" placeholder="Enter previous stock price" step="0.01" required>
+
+            <label for="newPrice">New Stock Price:</label>
+            <input type="number" id="newPrice" placeholder="Enter new stock price" step="0.01" required>
+
+            <label for="investment">Investment Amount:</label>
+            <input type="number" id="investment" placeholder="Enter amount invested" step="0.01" required>
+
+            <button type="submit">Calculate</button>
+        </form>
+
+        <div id="result" class="result">
+            <h2>Investment Details</h2>
+            <p id="sharesPurchased"></p>
+            <p id="currentValue"></p>
+            <p id="profit"></p>
+            <p id="totalCharges"></p>
+            <p id="netProfitAfterCharges"></p>
+            <p id="stcgTax"></p>
+            <p id="finalNetProfit"></p>
+            <p id="finalInvestmentValue"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('calculatorForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const prevPrice = parseFloat(document.getElementById('previousPrice').value);
+            const newPrice = parseFloat(document.getElementById('newPrice').value);
+            const investment = parseFloat(document.getElementById('investment').value);
+
+            const result = calculateProfit(prevPrice, newPrice, investment);
+
+            // Display result
+            document.getElementById('sharesPurchased').textContent = `Shares Purchased: ₹${result.sharesPurchased}`;
+            document.getElementById('currentValue').textContent = `Current Value: ₹${result.currentValue}`;
+            document.getElementById('profit').textContent = `Profit: ₹${result.profit}`;
+            document.getElementById('totalCharges').textContent = `Total Charges: ₹${result.totalCharges}`;
+            document.getElementById('netProfitAfterCharges').textContent = `Net Profit After Charges: ₹${result.netProfitAfterCharges}`;
+            document.getElementById('stcgTax').textContent = `STCG Tax: ₹${result.stcgTax}`;
+            document.getElementById('finalNetProfit').textContent = `Final Net Profit: ₹${result.finalNetProfit}`;
+            document.getElementById('finalInvestmentValue').textContent = `Final Investment Value: ₹${result.finalInvestmentValue}`;
+
+            document.querySelector('.result').style.display = 'block';
+        });
+
+        function calculateProfit(prevPrice, newPrice, investment) {
+            const shares = investment / prevPrice;
+            const currentValue = shares * newPrice;
+            const profit = currentValue - investment;
+
+            const brokerage = Math.min(0.0005 * currentValue, 20);
+            const stt = 0.001 * currentValue;
+            const transactionCharges = 0.0000345 * currentValue;
+            const gst = 0.18 * (brokerage + transactionCharges);
+            const stampDuty = 0.00015 * investment;
+
+            const totalCharges = brokerage + stt + transactionCharges + gst + stampDuty;
+            const netProfit = profit - totalCharges;
+            const stcgTax = netProfit > 0 ? 0.15 * netProfit : 0;
+            const finalNetProfit = netProfit - stcgTax;
+            const finalValue = investment + finalNetProfit;
+
+            return {
+                sharesPurchased: shares.toFixed(2),
+                currentValue: currentValue.toFixed(2),
+                profit: profit.toFixed(2),
+                totalCharges: totalCharges.toFixed(2),
+                netProfitAfterCharges: netProfit.toFixed(2),
+                stcgTax: stcgTax.toFixed(2),
+                finalNetProfit: finalNetProfit.toFixed(2),
+                finalInvestmentValue: finalValue.toFixed(2)
+            };
+        }
+    </script>
+</body>
+</html>
